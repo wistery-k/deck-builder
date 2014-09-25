@@ -26,7 +26,7 @@ window.onload = function() {
 
     var selectBox = document.getElementById("selectbox");
 
-    var sets = ["Theros", "BornofTheGods", "JourneyintoNyx", "Magic2015", "KlansofTarkir"];
+    var sets = ["THS", "BNG", "JOU", "M15", "KTK"];
     for(var i = 0; i < sets.length; i++) {
 	$.get(sets[i] + ".html", {}, function(data) {
 	    var d = new DOMParser().parseFromString(data, "text/html");
