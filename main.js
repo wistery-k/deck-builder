@@ -7,19 +7,46 @@ function opt(str) {
     return option;
 }
 
+function opt2(str) {
+    var option = document.createElement("option");
+    option.text = "1 " + str;
+    option.value = str;
+    return option;
+}
+
 function setCardText(s) {
     if(s.selectedIndex >= 0)
 	document.getElementById("cardtext").innerHTML = mp[s.options[s.selectedIndex].value];
 }
 
+function addCard(s, card) {
+    var options = s.options;
+    for(var i = 0; i < options.length; i++) {
+	var o = options[i];
+	var name = o.value;
+	if (name == card) {
+	    var num = parseInt(/(\d+) .*/.exec(o.text)[1]);
+	    o.text = String(num + 1) + " " + name;
+	    return;
+	}
+    }
+    s.add(opt2(card));
+}
+
 function removeSelected(s) {
     var index = s.selectedIndex;
     var o = s.options[index];
-    var value = o.value;
-    s.removeChild(o);
-    s.selectedIndex = Math.min(index, s.options.length-1);
-    setCardText(s);
-    return value;
+    var num = parseInt(/(\d+) .*/.exec(o.text)[1]);
+    var name = o.value;
+    if (num == 1) {
+	s.removeChild(o);
+	s.selectedIndex = Math.min(index, s.options.length-1);
+	setCardText(s);
+    }
+    else {
+	o.text = String(num - 1) + " " + name;
+    }
+    return name;
 }
 
 window.onload = function() {
@@ -47,13 +74,13 @@ window.onload = function() {
     selectBox.addEventListener("keydown", function(e) {
 	if(e.keyCode === 13) { // Enter Key
 	    var box = (e.shiftKey || e.ctrlKey) ? sideBoard : mainDeck;
-	    box.add(opt(selectBox.options[selectBox.selectedIndex].value));
+	    addCard(box, selectBox.options[selectBox.selectedIndex].value);
 	    if(box.selectedIndex < 0) box.selectedIndex = 0;
 	}
     });
 
     selectBox.addEventListener("dblclick", function(e) {
-	mainDeck.add(opt(selectBox.options[selectBox.selectedIndex].value));
+	addCard(mainDeck, selectBox.options[selectBox.selectedIndex].value);
 	if(mainDeck.selectedIndex < 0) mainDeck.selectedIndex = 0;
     });
 
@@ -69,7 +96,7 @@ window.onload = function() {
 	if(e.keyCode === 13) { // Enter Key
 	    var name = removeSelected(mainDeck);
 	    if((e.shiftKey || e.ctrlKey)) {
-		sideBoard.add(opt(name));
+		addCard(sideBoard, name);
 		if(sideBoard.selectedIndex < 0) sideBoard.selectedIndex = 0;
 	    }
 	}
@@ -91,7 +118,7 @@ window.onload = function() {
 	if(e.keyCode === 13) { // Enter Key
 	    var name = removeSelected(sideBoard);
 	    if((e.shiftKey || e.ctrlKey)) {
-		mainDeck.add(opt(name));
+		addCard(mainDeck, name);
 		if(mainDeck.selectedIndex < 0) mainDeck.selectedIndex = 0;
 	    }
 	}
